@@ -45,7 +45,8 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 安全校验
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -55,9 +56,13 @@ ROOT_URLCONF = 'Django_MyProj.urls'
 
 TEMPLATES = [
     {
+        # 指定模板引擎
+        # 常用模板引擎：DjangoTemplates、Jinja2
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')]
-        ,
+        # 指定html页面或者html模板存放的路径，可以添加多个路径
+        # 是Django搜索html页面或者html模板的路径
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        # 指定子应用下是否有html页面
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -76,10 +81,19 @@ WSGI_APPLICATION = 'Django_MyProj.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
+# 需要在全局settings中的DATABASES配置数据库连接的信息
 DATABASES = {
+    # 在Django中数据库的标识
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        # 指定数据库使用的引擎
+        'ENGINE': 'django.db.backends.mysql',
+        # 指定数据库的名称
+        'NAME': 'my_django',
+        # 指定连接的数据库地址、端口
+        'HOST': 'localhost',
+        'PORT': 3306,
+        'USER': 'root',
+        'PASSWORD': 'S3cur!ty',
     }
 }
 

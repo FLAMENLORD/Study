@@ -16,7 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 # 导入视图函数
-from projects.views import index01_page
+# from projects.views import index01_page, IndexPage
+from projects import views
 
 """
 urlpatterns为名称固定的列表，用于存放路由信息
@@ -35,7 +36,8 @@ urlpatterns为名称固定的列表，用于存放路由信息
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('index01/', index01_page),
+    path('index01/', views.index01_page),
+    path('index04/', views.IndexPage.as_view()),
     path('childproj/', include('projects.urls')),
 ]
 
