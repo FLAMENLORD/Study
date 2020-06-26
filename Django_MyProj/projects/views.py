@@ -2,9 +2,13 @@ from django.http import HttpResponse, JsonResponse
 from django.views import View
 from django.shortcuts import render
 from django.db import connection
+from django.db.models import Q, Count,
 import json
+import string
+import random
 
 from .models import Projects
+from interfaces.models import Interfaces
 
 
 # 视图函数
@@ -24,19 +28,17 @@ def index03_page(request):
 
 class IndexPage(View):
     def get(self, request):
-        Projects.objects.filter(name='占领火星计划')
+        qs = Projects.objects.filter(interfaces__name__regex='^[0-9]]')
+        for item in qs:
+            print(item.name)
 
-        # 方法一：
-        Projects.objects.get(project_id=17)
+        # qs = Projects.objects.filter(name__startswith='x').filter(programmer__contains='4')
+        # qs = Projects.objects.filter(name__startswith='x', programmer__contains='4')
 
-        # 方法二：
-        Projects.objects.filter(name='占领火星计划')
-
-        # 方法三：
-        Projects.objects.exclude(name='Django学习计划')
-
-        # 方法四：
-        res = Projects.objects.all()
+        qs = Projects.objects.filter(Q(leader__contains='1') | Q(programmer__contains='4'))
+        qs = Projects.objects.annotate(Count('name'))
+        # order_by排序，默认升序。使用 '-'，降序
+        Projects.objects.all().order_by('-id', 'name')
 
         return HttpResponse('<h2>get请求</h2>')
 
@@ -52,13 +54,20 @@ class IndexPage(View):
         return HttpResponse('<h2>put请求</h2>')
 
     def post(self, request):
-        # 方法一：
-        proj_obj = Projects(name='飞向月球计划', leader='ergui', tester='测试1', programmer='研发1')
-        proj_obj.save()
+        # 定义一个包含所有大小写字母、数字的字符串
+        one_str = string.ascii_letters + string.digits
 
-        # 方法二：
-        Projects.objects.create(name='占领火星计划', leader='ergui', tester='测试2', programmer='研发2')
-        Projects.objects.create(name='Django学习计划', leader='ergui', tester='测试2', programmer='研发2')
+        for i in range(20):
+            one_list = [random.choice(one_str) for _ in range(5)]
+            one_str_tmp = ' '.join(one_list)
+            one_dict = {
+                'name': one_str_tmp,
+                'tester': f'xxx测试{i}',
+                'desc': 'xxx描述',
+                'projects_id': random.choice([1, 2, 3])
+            }
+            # **one_dict，拆成关键字参数
+            one_obj = Interfaces.objects.create(**one_dict)
 
         return HttpResponse('<h2>post请求</h2>')
 
