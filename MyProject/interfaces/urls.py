@@ -1,4 +1,4 @@
-"""Django_MyProj URL Configuration
+"""MyProject URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.0/topics/http/urls/
@@ -14,11 +14,18 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path
+from interfaces import views
+from interfaces.views import InterfacesViewSet
 
-
+# 继承ViewSet之后，支持再定义路由时指定请求方法与action的映射
 urlpatterns = [
-    path('projects/', include('projects.urls')),
-    path('interfaces/', include('interfaces.urls')),
+    path('interfacesInfo/', views.InterfacesViewSet.as_view({
+        'get': 'list',
+        'post': 'create'
+    })),
+    path('interfacesInfo/<int:pk>', views.InterfacesViewSet.as_view({
+        'put': 'update',
+        'delete': 'destory'
+    })),
 ]
-

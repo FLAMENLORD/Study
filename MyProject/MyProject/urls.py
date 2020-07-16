@@ -1,4 +1,4 @@
-"""Django_MyProj URL Configuration
+"""MyProject URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.0/topics/http/urls/
@@ -15,10 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-
+from projects import views
+from interfaces import urls
 
 urlpatterns = [
-    path('projects/', include('projects.urls')),
-    path('interfaces/', include('interfaces.urls')),
+    path('projects/', views.ProjectsInfo.as_view()),
+    path('projects/<int:pk>', views.ProjectsInfo.as_view()),
+    path('apiDetail/', include('interfaces.urls')),
 ]
-
