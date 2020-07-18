@@ -31,6 +31,7 @@ class InterfacesInfo(mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.
             raise Http404(res)
         return interfaces_obj
 
+    # 将查询集提取到请求删除外部，提高性能，只需要查询一次即可完成多次操作
     queryset = Interfaces.objects.all()
     serializer_class = InterfacesModelSerializer
 

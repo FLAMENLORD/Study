@@ -1,65 +1,82 @@
-from django.forms import model_to_dict
-import datetime
-from django.http import JsonResponse
-from django.views import View
-import json
+from rest_framework.filters import OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
 
+from rest_framework import viewsets
+from rest_framework.generics import GenericAPIView
+from rest_framework.views import APIView, Response, status
 from .models import Projects
 from .serializers import ProjectModelSerializer
 
 
-class ProjectsInfo(View):
-    # 查询项目：id默认为空，id为空时，查询所有项目，否则查询指定项目详情
-    def get(self, request, pk=None):
-        qs = Projects.objects.all()
-        serializer_obj = ProjectModelSerializer(instance=qs, many=True)
-        return JsonResponse(serializer_obj.data, safe=False)
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import OrderingFilter
+# 导入自定义的分页引擎
+from utils.pagination import MyPagination
 
-    # 创建项目：数据以json格式传入
-    def post(self, request):
-        res = {}
-        try:
-            serializer_obj = ProjectModelSerializer(request.data)
-            if serializer_obj.is_valid():
-                serializer_obj.save()
-                res['msg'] = '接口信息创建成功'
-            else:
-                return JsonResponse(serializer_obj.errors, status=401, safe=False)
-        except Exception as e:
 
-            res['msg'] = f'接口信息创建失败：{e}'
+class ProjectsInfo(GenericAPIView):
+    queryset = Projects.objects.all()
+    serializer_class = ProjectModelSerializer
 
-        return JsonResponse(res)
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filter_fields = ['name', 'tester', 'id']
+    ordering_fields = ['name', 'id']
 
-    # 更新项目：传入需更新记录的id，修改数据以json形式传入
-    def put(self, request, pk):
-        update_data = json.loads(request.body)
-        res = {}
-        try:
-            proj_obj = Projects.objects.get(id=pk)
-            for key, value in update_data.items():
-                print(key, value)
+    def get(self, request, *args, **kwargs):
+        # 传递查询集对象给filter_queryset()
+        qs = self.filter_queryset(self.get_queryset())
+        # page = self.paginate_queryset(qs)
+        # # 判断是否指定分页引擎
+        # if page is not None:
+        #     # 调用序列化器，获取数据
+        #     serializer_obj = self.get_serializer(instance=page, many=True)
+        #
+        #     # 将数据进行分页
+        #     return self.get_paginated_response(serializer_obj.data)
+        serializer_obj = self.get_serializer(instance=qs, many=True)
+        return Response(serializer_obj.data, status=status.HTTP_200_OK)
 
-                proj_obj.key = value
-            proj_obj.save()
-            res['msg'] = '更新成功'
-            res['code'] = 0
-        except Exception as e:
-            res['msg'] = '更新失败'
-            res['code'] = 1
-            print('项目创建失败：', e)
-        return JsonResponse(res)
 
-    # 删除项目：传入需删除记录的id
-    def delete(self, requset, pk):
-        res = {}
-        try:
-            proj_obj = Projects.objects.get(id=pk)
-            proj_obj.delete()
-            res['msg'] = '删除成功'
-            res['code'] = 0
-        except Exception as e:
-            res['msg'] = '删除失败'
-            res['code'] = 1
-            print('项目删除失败：', e)
-        return JsonResponse(res)
+    # def get(self, request, *args, **kwargs):
+    #     return self.list(request, *args, **kwargs)
+    #
+    # def post(self, request, *args, **kwargs):
+    #     return self.create(request, *args, **kwargs)
+    #
+    # def put(self, request, *args, **kwargs):
+    #     return self.update(request, *args, **kwargs)
+    #
+    # def delete(self, request, *args, **kwargs):
+    #     return self.destroy(request, *args, **kwargs)
+#
+#
+# # class ProjectsDetail(generics.RetrieveUpdateAPIView):
+# #     queryset = Projects.objects.all()
+# #     serializer_class = ProjectModelSerializer
+#
+#     # # 查询项目：id默认为空，id为空时，查询所有项目，否则查询指定项目详情
+#     # def get(self, request, *args, **kwargs):
+#     #     return self.retrieve(request, *args, **kwargs)
+#     #
+#     # # 创建项目：数据以json格式传入
+#     # def post(self, request):
+#     #     serializer_obj = self.get_serializer(data=request.data)
+#     #     serializer_obj.is_valid(raise_exception=True)
+#     #     serializer_obj.save()
+#     #     return Response(serializer_obj.data, status=status.HTTP_200_OK)
+#     #
+#     # # 更新项目：传入需更新记录的id，修改数据以json形式传入
+#     # def put(self, request, pk):
+#     #     obj = self.get_object()
+#     #     serializer_obj = self.get_serializer(instance=obj, data=request.data)
+#     #     # 在视图中抛出的异常，DRF会自动处理，报错信息以json格式返回
+#     #     serializer_obj.is_valid(raise_exception=True)
+#     #     serializer_obj.save()
+#     #     return Response(serializer_obj.data, status=status.HTTP_201_CREATED)
+#     #
+#     # # 删除项目：传入需删除记录的id
+#     # def delete(self, requset, pk):
+#     #     obj = self.get_object()
+#     #     obj.delete()
+#     #     return Response(status=status.HTTP_204_NO_CONTENT)
+#

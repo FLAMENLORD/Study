@@ -8,7 +8,6 @@ class Interfaces(models.Model):
     projects = models.ForeignKey('projects.Projects', on_delete=models.SET_NULL, null=True, verbose_name='所属项目', help_text='所属项目', related_name='interface')
     tester = models.CharField(verbose_name='测试人员', max_length=50, help_text='测试人员')
     desc = models.CharField(verbose_name='简要概述', max_length=200, help_text='简要概述', null=True, blank=True)
-    models.ManyToManyField()
 
     class Meta:
         db_table = 'lemon_interfaces'

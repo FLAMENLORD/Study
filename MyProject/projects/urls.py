@@ -17,6 +17,13 @@ from django.contrib import admin
 from django.urls import path
 from projects import views
 
-# urlpatterns = [
-#     path('projects/<int:pk>/', views.ProjectsInfo),
-# ]
+# 继承ViewSet后，支持在路由表中指定请求方法与action的映射
+# as_view接收一个字典，key为请求方法，value为请求动作
+urlpatterns = [
+	path('projects/', views.ProjectViewSet.as_view({
+		'get': 'list', 'post': 'create'
+	})),
+	path('projects/<int:pk>', views.ProjectViewSet.as_view({
+		'get': 'retrieve', 'put': 'update', 'delete': 'destory'
+	})),
+]

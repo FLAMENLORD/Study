@@ -57,9 +57,11 @@ ROOT_URLCONF = 'MyProject.urls'
 
 TEMPLATES = [
     {
+        # 指定模板引擎DjangoTemplates、Jinja2
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')]
-        ,
+        # 指定html页面或html模板的路径，可以为多个
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        # 指定子应用下是否有HTML页面
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
