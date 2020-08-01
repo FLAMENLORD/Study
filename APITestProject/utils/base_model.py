@@ -1,0 +1,13 @@
+from django.db import models
+from django_unixdatetimefield import UnixDateTimeField
+
+
+# 提取公共字段，作为公用model
+class BaseModel(models.Model):
+	create_time = UnixDateTimeField(auto_now_add=True, verbose_name='创建时间', help_text='创建时间')
+	update_time = UnixDateTimeField(auto_now=True, verbose_name='更新时间', help_text='更新时间')
+
+	class Meta:
+		# 指定在迁移时不创建表
+		abstract = True
+
