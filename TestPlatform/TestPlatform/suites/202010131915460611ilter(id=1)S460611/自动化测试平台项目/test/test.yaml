@@ -1,0 +1,17 @@
+- config:
+    name: test
+    requset:
+      base_url: http://localhost:8000
+- test:
+    name: test
+    parameters:
+    - symbol:
+      - aaa
+      - bbb
+    request:
+      method: POST
+      url: /login/user
+    validate:
+    - check: code
+      comparator: equals
+      expected: '200'
